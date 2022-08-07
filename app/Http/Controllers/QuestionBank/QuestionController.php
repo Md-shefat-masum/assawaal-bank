@@ -106,7 +106,7 @@ class QuestionController extends Controller
 
     public function all(Request $request)
     {
-        $query = Question::where('status', 1)->orderBy('id', 'DESC')
+        $query = Question::where('status', 1)
             ->whereIn('module_id', $this->active_modules())
             ->whereIn('chapter_id', $this->active_chapters())
             ->with([
@@ -121,6 +121,12 @@ class QuestionController extends Controller
 
         if ($request->has('chapter_id') && (int)$request->chapter_id > 0) {
             $query->where('chapter_id', $request->chapter_id);
+        }
+
+        if ($request->has('order_by') && strlen($request->order_by)) {
+            $query->orderBy($request->order_by, ($request->order_type == 'true' ? 'ASC' : 'DESC'));
+        } else {
+            $query->orderBy('id', 'DESC');
         }
 
         if ($request->has('type') && strlen($request->type) >= 3) {
@@ -149,27 +155,27 @@ class QuestionController extends Controller
 
         if ($request->has('key') && strlen($request->key) > 0) {
             $key = $request->key;
-            $query->where(function ($q) use ($key) {
-                $q->where('question_title', $key)
-                    ->orWhere('id', $key)
-                    ->orWhere('question_title', 'LIKE', '%' . $key . '%')
-                    ->orWhere('module_id', $key)
-                    ->orWhere('chapter_id', $key)
-                    ->orWhere('answer', 'LIKE', '%' . $key . '%')
-                    ->orWhere('reference', 'LIKE', '%' . $key . '%')
-                    ->orWhere('option_1', 'LIKE', '%' . $key . '%')
-                    ->orWhere('option_2', 'LIKE', '%' . $key . '%')
-                    ->orWhere('option_3', 'LIKE', '%' . $key . '%')
-                    ->orWhere('level', 'LIKE', '%' . $key . '%')
-                    // ->orWhere(function ($q) use ($key) {
-                    //     return $q->whereExists(function ($q) use ($key) {
-                    //         return $q->select('name')
-                    //             ->from('modules')
-                    //             ->where('modules.name', 'LIKE', '%' . $key . '%');
-                    //     });
-                    // })
-                ;
-            });
+            $module = Module::where('name', 'LIKE', '%' . $key . '%')->first();
+            $chapter = Chapter::where('chapter_name', 'LIKE', '%' . $key . '%')->first();
+            if ($module) {
+                $key = $module->id;
+                $query->where('module_id', $key);
+            } else if ($chapter) {
+                $key = $chapter->id;
+                $query->where('chapter_id', $key);
+            } else {
+                $query->where(function ($q) use ($key) {
+                    $q->where('question_title', $key)
+                        // ->orWhere('id', $key)
+                        ->orWhere('question_title', 'LIKE', '%' . $key . '%')
+                        ->orWhere('answer', 'LIKE', '%' . $key . '%')
+                        ->orWhere('reference', 'LIKE', '%' . $key . '%')
+                        ->orWhere('option_1', 'LIKE', '%' . $key . '%')
+                        ->orWhere('option_2', 'LIKE', '%' . $key . '%')
+                        ->orWhere('option_3', 'LIKE', '%' . $key . '%')
+                        ->orWhere('level', 'LIKE', '%' . $key . '%');
+                });
+            }
         }
         if ($request->has('per_page') && $request->per_page) {
             $data = $query->paginate($request->per_page);
@@ -325,8 +331,11 @@ class QuestionController extends Controller
                             'option2' => $data[5],
                             'option3' => $data[6],
                             'answer' => $data[7],
-                            'reference' => $data[8],
-                            'level' => $data[9],
+                            'part_66_reference' => $data[8],
+                            'training_note_reference' => $data[9],
+                            'prepared_by' => $data[10],
+                            'verified_by' => $data[11],
+                            'level' => $data[12],
                         ];
                         $modules[] = $temp;
                     }
@@ -368,7 +377,10 @@ class QuestionController extends Controller
             $data->option_2 = $item['option2'];
             $data->option_3 = $item['option3'];
             $data->answer = $item['answer'];
-            $data->reference = $item['reference'];
+            $data->part_66_reference = $item['part_66_reference'];
+            $data->training_note_reference = $item['training_note_reference'];
+            $data->prepared_by = $item['prepared_by'];
+            $data->verified_by = $item['verified_by'];
             $data->level = strlen($item['level']) > 4 ? $item['level'] : 'undefined';
             $data->creator = auth()->user()->id;
             $data->save();
@@ -384,11 +396,19 @@ class QuestionController extends Controller
             'chapter',
             'question_pattern',
             'question_title',
+            'question_image',
             'option_1',
+            'option_1_image',
             'option_2',
+            'option_2_image',
             'option_3',
+            'option_3_image',
             'answer',
-            'reference',
+            'answer_image',
+            'part_66_reference',
+            'training_note_reference',
+            'prepared_by',
+            'verified_by',
             'level',
         ]);
         $data = Question::where('status', 1)
@@ -402,11 +422,19 @@ class QuestionController extends Controller
                 $question->chapter->chapter_name,
                 $question->question_pattern,
                 $question->question_title,
+                $question->question_image?url('').'/'.$question->question_image:'',
                 $question->option_1,
+                $question->option_1_image?url('').'/'.$question->option_1_image:'',
                 $question->option_2,
+                $question->option_2_image?url('').'/'.$question->option_2_image:'',
                 $question->option_3,
+                $question->option_3_image?url('').'/'.$question->option_3_image:'',
                 $question->answer,
-                $question->reference,
+                $question->answer_image?url('').'/'.$question->answer_image:'',
+                $question->part_66_reference,
+                $question->training_note_reference,
+                $question->prepared_by,
+                $question->verified_by,
                 $question->level,
             ];
             fputcsv($fp, $fields);
@@ -426,7 +454,10 @@ class QuestionController extends Controller
             'option_2',
             'option_3',
             'answer',
-            'reference',
+            'part_66_reference',
+            'training_note_reference',
+            'prepared_by',
+            'verified_by',
             'level',
         ]);
         if (request()->has('get_data_by_id') && $request->get_data_by_id) {
@@ -448,7 +479,10 @@ class QuestionController extends Controller
                 $question->option_2,
                 $question->option_3,
                 $question->answer,
-                $question->reference,
+                $question->part_66_reference,
+                $question->training_note_reference,
+                $question->prepared_by,
+                $question->verified_by,
                 $question->level,
             ];
             fputcsv($fp, $fields);
@@ -520,7 +554,10 @@ class QuestionController extends Controller
             'option_2',
             'option_3',
             'answer',
-            'reference',
+            'part_66_reference',
+            'training_note_reference',
+            'prepared_by',
+            'verified_by',
             'level',
         ]);
         if (request()->has('get_data_by_id') && $request->get_data_by_id) {
@@ -543,7 +580,10 @@ class QuestionController extends Controller
                 $question->option_2,
                 $question->option_3,
                 $question->answer,
-                $question->reference,
+                $question->part_66_reference,
+                $question->training_note_reference,
+                $question->prepared_by,
+                $question->verified_by,
                 $question->level,
             ];
             fputcsv($fp, $fields);
@@ -613,6 +653,93 @@ class QuestionController extends Controller
                 $item->level_1_count,
                 $item->level_2_count,
                 $item->level_3_count,
+            ];
+            fputcsv($fp, $fields);
+        }
+        fclose($fp);
+    }
+
+    public function export_question_by_module(Request $request)
+    {
+        $fp = fopen(public_path('export.csv'), 'w');
+        fputcsv($fp, [
+            'module',
+            'chapter',
+            'question_pattern',
+            'question_title',
+            'option_1',
+            'option_2',
+            'option_3',
+            'answer',
+            'part_66_reference',
+            'training_note_reference',
+            'prepared_by',
+            'verified_by',
+            'level',
+        ]);
+
+        // $data = $this->get_all_module_chapter_based_question($request->module_id)->getData();
+        $data = Question::where('module_id', $request->module_id)
+            ->with('module', 'chapter')
+            ->get();
+        foreach ($data as $question) {
+            $fields = [
+                $question->module->name,
+                $question->chapter->chapter_name,
+                $question->question_pattern,
+                $question->question_title,
+                $question->option_1,
+                $question->option_2,
+                $question->option_3,
+                $question->answer,
+                $question->part_66_reference,
+                $question->training_note_reference,
+                $question->prepared_by,
+                $question->verified_by,
+                $question->level,
+            ];
+            fputcsv($fp, $fields);
+        }
+        fclose($fp);
+    }
+
+    public function export_question_by_chapter(Request $request)
+    {
+        $fp = fopen(public_path('export.csv'), 'w');
+        fputcsv($fp, [
+            'module',
+            'chapter',
+            'question_pattern',
+            'question_title',
+            'option_1',
+            'option_2',
+            'option_3',
+            'answer',
+            'part_66_reference',
+            'training_note_reference',
+            'prepared_by',
+            'verified_by',
+            'level',
+        ]);
+
+        $data = Question::where('chapter_id', $request->chapter_id)
+            ->with('module', 'chapter')
+            ->get();
+        foreach ($data as $question) {
+            $fields = [
+                $question->module->name,
+                $question->chapter->chapter_name,
+                $question->question_pattern,
+                $question->question_title,
+                $question->option_1,
+                $question->option_2,
+                $question->option_3,
+                $question->answer,
+                $question->part_66_reference,
+                $question->training_note_reference,
+                $question->prepared_by,
+                $question->verified_by,
+                $question->level,
             ];
             fputcsv($fp, $fields);
         }

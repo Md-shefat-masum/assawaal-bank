@@ -30,7 +30,10 @@ class CreateQuestionsTable extends Migration
             $table->string('option_4_image',100)->nullable();
             $table->text('answer')->nullable();
             $table->string('answer_image',100)->nullable();
-            $table->text('reference')->nullable();
+            $table->text('part_66_reference')->nullable();
+            $table->text('training_note_reference')->nullable();
+            $table->text('prepared_by')->nullable();
+            $table->text('verified_by')->nullable();
             $table->text('level')->nullable();
             $table->string('creator',20)->nullable();
             $table->string('slug',50)->nullable();

@@ -12,11 +12,33 @@
 <script>
 export default {
     props: [
+        'module_question_export_link',
+        'chapter_question_export_link',
         'page',
     ],
+    watch: {
+        module_question_export_link:{
+            handler: function(newV){
+                this.url = newV
+            }
+        },
+        chapter_question_export_link:{
+            handler: function(newV){
+                this.url = newV
+            }
+        },
+    },
+    data: function(){
+        return {
+            url: null,
+        }
+    },
+    created: function(){
+        this.url = `/question-bank/${this.page}/export-all`;
+    },
     methods:{
         export_all: function(){
-            axios.post(`/question-bank/${this.page}/export-all`)
+            axios.post(this.url)
                 .then(res=>{
                     // console.log(res.data);
                     this.download(location.origin+'/export.csv',`${_.capitalize(this.page)}_List_Export_${moment().format('DD-MMMM-YYYY hh-mm-ss A')}.csv`);

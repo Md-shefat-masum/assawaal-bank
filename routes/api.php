@@ -28,6 +28,8 @@ Route::group(
             Route::post('/api-register', 'Auth\ApiLoginController@register');
             Route::get('/auth-check', 'Auth\ApiLoginController@auth_check');
             Route::post('/forget-mail', 'Auth\ApiLoginController@forget_mail');
+            Route::post('/check-code', 'Auth\ApiLoginController@check_code');
+            Route::post('/logout-from-all-devices', 'Auth\ApiLoginController@logout_from_all_devices');
         });
 
         Route::group(['middleware' => ['auth:api']], function () {
@@ -90,6 +92,8 @@ Route::group(
                     Route::post('/export-all-module-based', 'QuestionBank\QuestionController@export_all_module_based');
                     Route::post('/export-selected', 'QuestionBank\QuestionController@export_selected');
                     Route::post('/export-and-delete-selected', 'QuestionBank\QuestionController@export_and_delete_selected');
+                    Route::post('/export-question-by-chapter', 'QuestionBank\QuestionController@export_question_by_chapter');
+                    Route::post('/export-question-by-module', 'QuestionBank\QuestionController@export_question_by_module');
                 });
 
                 Route::group(['prefix' => 'question-paper'], function () {

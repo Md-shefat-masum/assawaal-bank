@@ -20,6 +20,7 @@ const actions = {
         axios.post('/user/check-auth')
             .then((res) => {
                 // console.log(res.data);
+                $('#app_pre_loader').toggleClass('d-none');
                 this.commit('set_check_auth', true);
             })
             .catch((err)=>{

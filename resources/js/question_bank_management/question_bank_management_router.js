@@ -43,6 +43,7 @@ import questionPaperCreate from './views/question_paper/Create'
 import questionPaperImport from './views/question_paper/Import'
 import questionPaperEdit from './views/question_paper/Edit'
 import questionPaperDetails from './views/question_paper/Details'
+import QuestionPaperDocxPrint from './views/question_paper/QuestionPaperDocxPrint'
 
 
 Vue.use(VueRouter);
@@ -238,6 +239,11 @@ const routes = [{
                     path: 'details/:id',
                     name: 'questionPaperDetails',
                     component: questionPaperDetails,
+                },
+                {
+                    path: 'question-paper-docx-print/:id',
+                    name: 'QuestionPaperDocxPrint',
+                    component: QuestionPaperDocxPrint,
                 },
             ],
         },

@@ -649,4 +649,10 @@ table.question_list_table_for_create_paper_details.question_list_table tr td:nth
 table.question_list_table_for_create_paper_details.question_list_table tr td:nth-child(9) {
   width: 125px;
 }
+.has_event {
+  cursor: pointer;
+}
+.has_event:hover {
+  text-shadow: 4px 4px 3px rgba(0, 0, 0, 0.23);
+}
 /*# sourceMappingURL=./admin.css.map */

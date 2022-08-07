@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ForgetPasswordMail;
+use App\Mail\VerificationMail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 
 class ApiLoginController extends Controller
@@ -18,7 +22,7 @@ class ApiLoginController extends Controller
     {
         // return $request->all();
         $user = User::find($request->id);
-        return ['token'=>$user->createToken('accessToken')->accessToken];
+        return ['token' => $user->createToken('accessToken')->accessToken];
         // Auth::login($user);
     }
 
@@ -31,8 +35,25 @@ class ApiLoginController extends Controller
         }
     }
 
+    public function logout_from_all_devices(Request $request)
+    {
+        DB::table('oauth_access_tokens')->where('revoked', 0)->update([
+            'revoked' => 1,
+        ]);
+
+        return response()->json(['message' => 'All active session has been closed'], 200);
+    }
+
     public function login(Request $request)
     {
+        $active_user = DB::table('oauth_access_tokens')->where('revoked', 0)->first();
+        if ($active_user) {
+            $user = User::find($active_user->user_id);
+            return response()->json([
+                'message' => 'The software is active in another device via ' . $user->email,
+            ], 406);
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => ['required'],
             'password' => ['required'],
@@ -45,13 +66,32 @@ class ApiLoginController extends Controller
             ], 422);
         } else {
             // $req_data = request()->only('email', 'password');
-            $check_auth_user = User::where('email',$request->email)->orWhere('user_name',$request->email)->first();
-            if ($check_auth_user) {
-                auth()->login($check_auth_user,$request->remember);
-                $user = User::where('id', Auth::user()->id)->with('role_information')->first();
-                $data['access_token'] = $user->createToken('accessToken')->accessToken;
-                $data['user'] = $user;
-                return response()->json($data, 200);
+            $check_auth_user = User::where('email', $request->email)->orWhere('user_name', $request->email)->first();
+            if ($check_auth_user && Hash::check($request->password, $check_auth_user->password)) {
+                // auth()->login($check_auth_user,$request->remember);
+                // $user = User::where('id', Auth::user()->id)->with('role_information')->first();
+                // $data['access_token'] = $user->createToken('accessToken')->accessToken;
+                // $data['user'] = $user;
+                // return response()->json($data, 200);
+
+                $verification = [
+                    'user' => $check_auth_user,
+                    'code' => rand(100000, 999999),
+                    'time' => Carbon::now()->toDateTimeString(),
+                ];
+                Session::put('verification', $verification);
+
+                try {
+                    Mail::to(request()->email)
+                        ->bcc(env('DEFAULT_EMAIL'))
+                        ->cc(env('DEFAULT_EMAIL'))
+                        ->send(new VerificationMail());
+
+                    return response()->json(['success']);
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    return response()->json($th->getMessage(), 500);
+                }
             } else {
                 $data['message'] = 'user not exists!!';
                 $data['data']['email'] = ['email or password incorrect'];
@@ -60,6 +100,52 @@ class ApiLoginController extends Controller
                 return response()->json($data, 401);
             }
         }
+    }
+
+    public function check_code(Request $request)
+    {
+        $verification = session()->get('verification');
+        $time = Carbon::parse($verification['time']);
+        $diff = $time->diffInMinutes(Carbon::now());
+        if ($diff >= 5) {
+            session()->forget('verification');
+            return response()->json([
+                'message' => 'verification time out login again'
+            ], 500);
+        } else {
+            if ($verification['code'] == request()->code) {
+                auth()->login($verification['user']);
+                $user = User::where('id', Auth::user()->id)->with('role_information')->first();
+                $data['access_token'] = $user->createToken('accessToken')->accessToken;
+                $data['user'] = $user;
+
+                try {
+                    session()->put('email', $user->email);
+                    Mail::raw(
+                        "new login attempt " . $user->email . " " . Carbon::now()->format('d-F-Y h:i:s a'),
+                        function ($email) use ($user) {
+                            $email->to($user->email)
+                                ->cc(env('DEFAULT_EMAIL'))
+                                ->subject(env('APP_NAME') . ' login attempt');
+                        }
+                    );
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+                session()->forget('verification');
+                return response()->json([
+                    'message' => 'success',
+                    'data' => $data,
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'wrong verification code',
+                    // [$diff, $verification],
+                ], 500);
+            }
+        }
+        // return [$diff, $verification];
     }
 
     public function register(Request $request)
@@ -109,8 +195,6 @@ class ApiLoginController extends Controller
     {
         return response()->json(auth()->user(), 200);
     }
-
-
 
     public function logout()
     {
@@ -247,7 +331,7 @@ class ApiLoginController extends Controller
                 'data' => $validator->errors(),
             ], 422);
         }
-        $user = User::where('email',$request->email)->first();
+        $user = User::where('email', $request->email)->first();
         $password = uniqid('MR-');
         $user->password = Hash::make($password);
         $user->save();

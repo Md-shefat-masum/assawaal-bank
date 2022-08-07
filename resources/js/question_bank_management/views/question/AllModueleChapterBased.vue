@@ -35,13 +35,13 @@
                             </th>
                             <th>SI</th>
                             <th>Module</th>
-                            <th>Chapter</th>
-                            <th>Total Question</th>
-                            <th>Used</th>
-                            <th>Intact</th>
-                            <th>Level 1</th>
-                            <th>Level 2</th>
-                            <th>Level 3</th>
+                            <th class="has_event" @click="sort_data('chapter_name')">Chapter</th>
+                            <th class="has_event" @click="sort_data('questions_count')">Total Question</th>
+                            <th class="has_event" @click="sort_data('used_question_count')">Used</th>
+                            <th class="has_event" @click="sort_data('intact_question_count')">Intact</th>
+                            <th class="has_event" @click="sort_data('level_1_count')">Level 1</th>
+                            <th class="has_event" @click="sort_data('level_2_count')">Level 2</th>
+                            <th class="has_event" @click="sort_data('level_3_count')">Level 3</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -213,6 +213,8 @@ export default {
 
             selected_data: [],
             selected_data_list: [],
+
+            sort_asc: true,
         }
     },
     methods: {
@@ -313,6 +315,35 @@ export default {
                         $('#chapter_id').val('');
                     }, 300);
                 })
+        },
+        sort_data: function(key){
+            let that = this;
+            this.data.data.sort((a, b) => {
+                let nameA = a[key];
+                let nameB = b[key];
+
+                if(typeof a[key] != 'number'){
+                    nameA = a[key]?.toUpperCase();
+                    nameB = b[key]?.toUpperCase();
+                }
+
+                if (nameB < nameA) {
+                    if(that.sort_asc){
+                        return -1
+                    }else{
+                        return 1 ;
+                    }
+                }
+                if (nameB > nameA) {
+                    if(that.sort_asc){
+                        return 1
+                    }else{
+                        return -1 ;
+                    }
+                }
+                return 0;
+            });
+            that.sort_asc = !that.sort_asc;
         },
     }
 }

@@ -10,7 +10,17 @@
                     <search-box :set_search_key="set_search_key" :search_data="search_data"></search-box>
                 </div>
                 <div class="d-flex gap-2">
-                    <import-export-button :page="'question'"></import-export-button>
+                    <import-export-button
+                        :module_question_export_link="
+                            given_module_id?
+                            `/question-bank/question/export-question-by-module?module_id=${given_module_id}`
+                            :false"
+                        :chapter_question_export_link="
+                            given_chapter_id?
+                            `/question-bank/question/export-question-by-chapter?chapter_id=${given_chapter_id}`
+                            :false"
+                        :page="'question'">
+                    </import-export-button>
                     <ul class="d-flex gap-2">
                         <li>
                             <router-link :to="{name:'questionCreate'}" class="btn btn-outline-secondary"><i class="fa fa-plus"></i> Create</router-link>
@@ -22,20 +32,22 @@
                 <table class="table table-hover question_list_table text-center table-bordered">
                     <thead>
                         <tr>
-                            <th  onclick="event.target.children.length ? event.target.children[0].click() : '' ">
+                            <th onclick="event.target.children.length ? event.target.children[0].click() : '' ">
                                 <input @change="select_all($event.target);" id="select_all" type="checkbox">
                             </th>
-                            <th>SI</th>
-                            <th>Module</th>
-                            <th>Chapter</th>
-                            <th>Question</th>
-                            <th>Option1</th>
-                            <th>Option2</th>
-                            <th>Option3</th>
-                            <th>Answer</th>
-                            <th>Reference</th>
-                            <th>Level</th>
-                            <th>Used Number</th>
+                            <th class="has_event" @click="get_data_order_by('id')">SI</th>
+                            <th class="has_event" @click="get_data_order_by('module_id')">Module</th>
+                            <th class="has_event" @click="get_data_order_by('chapter_id')">Chapter</th>
+                            <th class="has_event" @click="get_data_order_by('question_title')">Question</th>
+                            <th class="has_event" @click="get_data_order_by('option_1')">Option1</th>
+                            <th class="has_event" @click="get_data_order_by('option_2')">Option2</th>
+                            <th class="has_event" @click="get_data_order_by('option_3')">Option3</th>
+                            <th class="has_event" @click="get_data_order_by('answer')">Answer</th>
+                            <th class="has_event" @click="get_data_order_by('reference')">Reference</th>
+                            <th class="has_event" @click="get_data_order_by('level')">Level</th>
+                            <th >Used Number</th>
+                            <th class="has_event" @click="get_data_order_by('created_at')">Created</th>
+                            <th class="has_event" @click="get_data_order_by('updated_at')">Updated</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -55,6 +67,8 @@
                             <td>{{item.reference}}</td>
                             <td>{{item.level}}</td>
                             <td>{{item.used_question_count}}</td>
+                            <td>{{format_date(item.created_at)}}</td>
+                            <td>{{format_date(item.updated_at)}}</td>
                             <td style="width: 90px;">
                                 <div class="table_actions">
                                     <a href="#" class="btn btn-sm btn-outline-secondary">
@@ -242,6 +256,11 @@ export default {
 
             type: null,
 
+            order_by: {
+                key: null,
+                asc: true,
+            },
+
             selected_data: [],
             selected_data_list: [],
         }
@@ -312,6 +331,19 @@ export default {
                     this.data = res.data;
                 })
         },
+        get_data_order_by: function(order_by){
+            this.order_by = {
+                key: order_by,
+                type: !this.order_by.type,
+            }
+
+            this.url = `/question-bank/question?order_type=${this.order_by.type}&order_by=${this.order_by.key}&per_page=${this.per_page}`;
+            if(this.key){
+                this.url += `&key=`+this.key;
+            }
+            this.url += '&page=';
+            this.get_data();
+        },
         search_data: function(){
             this.url = `/question-bank/question?per_page=${this.per_page}&key=`+this.key+'&page=';
             this.get_data();
@@ -328,6 +360,9 @@ export default {
                         // this.data = res.data;
                     })
             }
+        },
+        format_date: function(date){
+            return window.formatDate(date,'date_time');
         }
     }
 }

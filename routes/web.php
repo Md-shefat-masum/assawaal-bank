@@ -1,8 +1,6 @@
 <?php
 
-use App\Models\Chapter;
-use App\Models\Module;
-use App\Models\Question;
+use App\Mail\VerificationMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -20,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'WebsiteController@index')->name('index')->middleware('auth');
+
 Route::get('/truncate', function () {
     if (request()->db) {
         DB::table(request()->db)->truncate();
@@ -45,8 +44,7 @@ Route::get('/print', function ($p = null) {
     return view('invoice');
 });
 
-Route::get('/dashboard', 'Admin\AdminController@index')->middleware('auth');
-
+Route::get('/dashboard', 'Admin\AdminController@index');
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -56,3 +54,16 @@ Route::get('/data-reload', function () {
     \Illuminate\Support\Facades\Artisan::call('passport:install');
     return redirect()->back();
 });
+
+Route::any('/logins', function () {
+    // \Illuminate\Support\Facades\Mail::raw('your verification code is :' . rand(100000, 999999), function ($message) {
+    //     $message->to(request()->email)
+    //         ->subject('varification code');
+    // });
+    // $mail = \Illuminate\Support\Facades\Mail::to(request()->email)
+    // // ->bcc('nabilfarhaan77@gmail.com')
+    // // ->cc('nabilfarhaan77@gmail.com')
+    // ->send(new VerificationMail());
+    dd(session()->all(), auth()->user(), auth()->guard('web'), auth()->guard('api') );
+    return request()->all();
+})->name('route name');

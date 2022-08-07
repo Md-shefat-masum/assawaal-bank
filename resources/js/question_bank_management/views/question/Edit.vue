@@ -99,11 +99,35 @@
                             </div>
 
                             <div class="form-group mb-3">
-                                <label for="reference" class="text-capitalize">
-                                    Reference
+                                <label for="part_66_reference" class="text-capitalize">
+                                    part 66 reference
                                     <span class="text-danger">*</span>
                                 </label>
-                                <textarea type="text" id="reference" rows="1" name="reference" class="form-control"></textarea>
+                                <textarea type="text" id="part_66_reference" rows="1" name="part_66_reference" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="training_note_reference" class="text-capitalize">
+                                    training note reference
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <textarea type="text" id="training_note_reference" rows="1" name="training_note_reference" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="prepared_by" class="text-capitalize">
+                                    prepared by
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="prepared_by" rows="1" name="prepared_by" class="form-control"/>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="verified_by" class="text-capitalize">
+                                    verified by
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="verified_by" rows="1" name="verified_by" class="form-control"/>
                             </div>
 
                             <div class="form-group mb-3">
@@ -135,6 +159,10 @@ export default {
         this.get_modules();
         this.get_chapters();
         this.get_data();
+
+        setTimeout(() => {
+            window.init_preview_image();
+        }, 300);
     },
     data: function(){
         return {
@@ -154,16 +182,7 @@ export default {
                         $('#option_2').val(this.data.option_2);
                         $('#option_3').val(this.data.option_3);
                     }
-                    $('input[type="file"]').off().on('change',function(e){
-                        let check = $(this).next()[0]?.tagName;
-                        if(check === 'IMG'){
-                            $(this).next().attr('src', URL.createObjectURL(e.target.files[0]) );
-                        }else{
-                            $(`
-                                <img class="img-thumbnail my-3 d-block" style="height: 50px;" src="${URL.createObjectURL(e.target.files[0])}" alt="">
-                            `).insertAfter($(this));
-                        }
-                    })
+                    window.init_preview_image();
                 }, 300);
             }
         }
@@ -181,7 +200,7 @@ export default {
                                 const element = res.data[key];
                                 if($(`#${key}`).prop('type') != 'file'){
                                     $(`#${key}`).val(element);
-                                }else{
+                                }else if(element){
                                     let check = $(`#${key}`).next()[0]?.tagName;
                                     if(check === 'IMG'){
                                         $(`#${key}`).next().attr('src', element );

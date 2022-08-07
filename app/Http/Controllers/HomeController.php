@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -13,7 +15,8 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+
+        // $this->middleware('auth');
     }
 
     /**
@@ -23,7 +26,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // return view('home');
-        return redirect('/dashboard');
+        if (request()->has('token')) {
+            $id = explode('_', request()->token)[2];
+            $user = User::where('id', $id)->first();
+
+            if ($user) {
+                auth()->guard('web')->login($user);
+                return redirect('/dashboard');
+            }
+        } elseif (auth()->guard('web')->check()) {
+            dd(Auth::guard('web')->user(), request()->all());
+            return redirect('/dashboard');
+        } else {
+            return redirect('/login');
+        }
     }
 }

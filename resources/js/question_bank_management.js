@@ -13,17 +13,40 @@ axios.defaults.baseURL = location.origin + '/api/v1';
 window.onUploadProgress = (progressEvent) => {}
 function onDownloadProgress (progressEvent) {}
 
-window.auto_logout_time = 20; //min
+window.formatDate = (date, format_type="date") => {
+    if(format_type == 'date'){
+        return moment(date).format('DD-MMMM-YYYY')
+    }else if(format_type == 'date_time'){
+        return moment(date).format('DD-MMMM-YYYY hh-mm-ss A')
+    }else if(format_type == 'time'){
+        return moment(date).format('hh-mm-ss A')
+    }else{
+        return moment(date).format(format_type)
+    }
+}
+
+window.init_preview_image = () =>{
+    $('input[type="file"]').off().on('change',function(e){
+        let check = $(this).next()[0]?.tagName;
+        if(check === 'IMG'){
+            $(this).next().attr('src', URL.createObjectURL(e.target.files[0]) );
+        }else{
+            $(`
+                <img class="img-thumbnail my-3 d-block" style="height: 50px;" src="${URL.createObjectURL(e.target.files[0])}" alt="">
+            `).insertAfter($(this));
+        }
+    })
+}
+
+window.auto_logout_time = 15; //min
 window.count_left_time_sec = 1;
 setInterval(() => {
     let idle_sec = window.count_left_time_sec++;
     sessionStorage.setItem('idle_time',1000 * idle_sec );
 
     if(1000*idle_sec == window.auto_logout_time*60*1000 ){
-        // alert('session time out');
-        document.querySelector('meta[name="token"]').content = '';
-        window.localStorage.removeItem('token');
-        document.getElementById('logout-form').submit();
+        window.clear_session();
+        window.location = '/login';
     }
 }, 1000);
 
@@ -48,6 +71,7 @@ axios.interceptors.request.use(function (config) {
     // }
 
     sessionStorage.setItem('last_time',moment().format("DD/MM/YYYY HH:mm:ss"));
+    localStorage.setItem('last_time',new moment());
 
     return {
         ...config,
@@ -59,6 +83,22 @@ axios.interceptors.request.use(function (config) {
     console.log('request error');
     return Promise.reject(error);
 });
+
+window.clear_session = () => {
+    window.localStorage.removeItem('user');
+    window.localStorage.removeItem('token');
+    window.localStorage.removeItem('last_time');
+}
+
+window.logout = () => {
+    window.clear_session();
+    if(window.confirm('want to logout??')){
+        axios.post('/user/api-logout')
+            .then(res=>{
+                window.location='/';
+            })
+    }
+}
 
 window.axios.interceptors.response.use(
     (response) => {
@@ -135,10 +175,51 @@ window.axios.interceptors.response.use(
             console.log(error.response);
         }
 
+        if(error.response.status == 401){
+            window.clear_session();
+            window.location = "/";
+        }
+
         window.s_alert('error',error.response?.statusText)
         throw error;
     }
 );
+
+window.print_question_paper_docx = (element,filename=null) => {
+    var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+    var postHtml = "</body></html>";
+    var html = preHtml+document.getElementById(element).innerHTML+postHtml;
+
+    var blob = new Blob(['\ufeff', html], {
+        type: 'application/msword'
+    });
+
+    // Specify link url
+    var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+
+    // Specify file name
+    filename = filename?filename+'.doc':'document.doc';
+
+    // Create download link element
+    var downloadLink = document.createElement("a");
+
+    document.body.appendChild(downloadLink);
+
+    if(navigator.msSaveOrOpenBlob ){
+        navigator.msSaveOrOpenBlob(blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = url;
+
+        // Setting the file name
+        downloadLink.download = filename;
+
+        //triggering the function
+        downloadLink.click();
+    }
+
+    document.body.removeChild(downloadLink);
+}
 
 // import vuex
 const {

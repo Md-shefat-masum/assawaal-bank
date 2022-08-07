@@ -52,6 +52,9 @@
                                     <th>Option.2</th>
                                     <th>Option.3</th>
                                     <th>Answer</th>
+                                    <th>Part 66 reference</th>
+                                    <th>Training note reference</th>
+                                    <th>Verified by</th>
                                     <th>Reference</th>
                                     <th>Level</th>
                                 </tr>
@@ -67,7 +70,10 @@
                                     <td>{{item.option2}}</td>
                                     <td>{{item.option3}}</td>
                                     <td>{{item.answer}}</td>
-                                    <td>{{item.reference}}</td>
+                                    <td>{{item.part_66_reference}}</td>
+                                    <td>{{item.training_note_reference}}</td>
+                                    <td>{{item.prepared_by}}</td>
+                                    <td>{{item.verified_by}}</td>
                                     <td>{{item.level}}</td>
                                 </tr>
                             </tbody>

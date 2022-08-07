@@ -7,6 +7,9 @@
                         <h4 class="text-capitalise">Details: {{question.name}} ( {{selected_question_list.length}} )</h4>
                         <ul class="d-flex gap-2">
                             <li>
+                                <router-link :to="{name:'QuestionPaperDocxPrint',params:{id:question.id}}" class="btn btn-outline-primary"><i class="fa fa-file-arrow-down"></i> Export question docx</router-link>
+                            </li>
+                            <li>
                                 <a href="#" @click.prevent="get_paper_data()" class="btn btn-outline-warning"><i class="fa fa-shuffle"></i> Shuffle</a>
                             </li>
                             <li>

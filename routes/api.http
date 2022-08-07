@@ -7,12 +7,12 @@ content-type: application/json
 }
 
 ###
-GET  http://report.pro/api/v1/user/auth-check HTTP/1.1
+GET  http://127.0.0.1:8006/api/v1/user/auth-check HTTP/1.1
 content-type: application/json
 
 {
-    "email": "myphoto204@gmail.com",
-    "password": "@12345678"
+    "email": "myphoto288@gmail.com",
+    "password": "12345678"
 }
 
 ###
@@ -29,4 +29,4 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpI
 
 ###
 
-POST http://report.pro/api/v1/user/get-token?id=1 HTTP/1.1
+POST http://127.0.0.1:8006/api/v1/user/get-token?id=3 HTTP/1.1

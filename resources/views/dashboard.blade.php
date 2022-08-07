@@ -6,7 +6,7 @@
 
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <meta name="token" content="{{$token}}" />
+        <meta name="token" content="" />
 
         <title>Question Bank</title>
 
@@ -24,8 +24,26 @@
         <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <style>
+            #app_pre_loader{
+                position: fixed;
+                top: 0;
+                left: 0;
+                backdrop-filter: blur(4px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+                z-index: 999;
+                background: #000000d1;
+            }
+        </style>
         <script>
-            window.localStorage.setItem('token',document.querySelector('meta[name="token"]').content);
+            if(!window.localStorage.getItem('token')){
+                window.location = '/login'
+            }
+
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -49,6 +67,10 @@
     </head>
 
     <body>
+        <div id="app_pre_loader">
+            <img src="/loader.svg" alt="">
+        </div>
+
         <div id="backend_body">
             <div id="QuestionBankManagementAppBody">
                 <header class="d-flex p-0 shadow">
@@ -80,11 +102,12 @@
                 </header>
                 <div class="container-fluid">
                     <div>
-                        <question-bank-management-app user="{{ auth()->user() }}"></question-bank-management-app>
+                        <question-bank-management-app></question-bank-management-app>
                     </div>
                 </div>
             </div>
         </div>
+
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
             @csrf
         </form>
@@ -92,6 +115,7 @@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="/js/question_bank_management.js"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        
     </body>
 </html>
 
