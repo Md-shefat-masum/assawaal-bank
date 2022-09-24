@@ -141,6 +141,15 @@
                                 <!-- <textarea type="text" id="level" rows="1" name="level" class="form-control"></textarea> -->
                             </div>
 
+                            <div class="form-group mb-3">
+                                <label for="created_at" class="text-capitalize">
+                                    created time
+                                    <span class="text-danger">*</span>
+                                    <span class="text-info ps-1" @click="created_at = format_date()">Set</span>
+                                </label>
+                                <input type="datetime" v-model="created_at" id="created_at" name="created_at" class="form-control"/>
+                            </div>
+
                             <div class="text-center">
                                 <button class="btn btn-info"><i class="fa fa-sign-in"></i> submit</button>
                             </div>
@@ -158,12 +167,14 @@ export default {
         this.get_modules();
         this.question_pattern = 'descriptive';
         // this.get_chapters();
+        this.created_at = this.format_date();
     },
     data: function(){
         return {
             modules: [],
             chapters: [],
             question_pattern: null,
+            created_at: null,
         }
     },
     watch: {
@@ -176,6 +187,9 @@ export default {
         }
     },
     methods: {
+        format_date: function(date){
+            return window.formatDate(date,'YYYY-MM-DD HH:mm:ss');
+        },
         get_modules: function(){
             axios.get('/question-bank/module/get-all')
                 .then(res=>{

@@ -57,6 +57,8 @@
                                     <th>Verified by</th>
                                     <th>Reference</th>
                                     <th>Level</th>
+                                    <th>created_at</th>
+                                    <th>updated_at</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,6 +77,8 @@
                                     <td>{{item.prepared_by}}</td>
                                     <td>{{item.verified_by}}</td>
                                     <td>{{item.level}}</td>
+                                    <td>{{item.created_at}}</td>
+                                    <td>{{item.updated_at}}</td>
                                 </tr>
                             </tbody>
                         </table>

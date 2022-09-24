@@ -15,6 +15,7 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
+            $table->string('si',100)->nullable();
             $table->bigInteger('module_id')->nullable();
             $table->bigInteger('chapter_id')->nullable();
             $table->string('question_pattern',100)->nullable();

@@ -44,6 +44,11 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link class="nav-link" :to="{name:'QuestionExport'}">
+                            <i class="fa fa-list"></i> &nbsp; export
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <!-- <a class="nav-link" href="/logout" onclick="event.preventDefault();window.localStorage.removeItem('token');window.confirm('want to logout??') && document.getElementById('logout-form').submit();"> -->
                         <a class="nav-link" href="/logout" @click.prevent="logout()">
                             <i class="fa fa-sign-out"></i> &nbsp; Logout

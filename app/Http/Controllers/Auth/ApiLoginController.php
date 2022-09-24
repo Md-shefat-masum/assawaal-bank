@@ -46,13 +46,6 @@ class ApiLoginController extends Controller
 
     public function login(Request $request)
     {
-        $active_user = DB::table('oauth_access_tokens')->where('revoked', 0)->first();
-        if ($active_user) {
-            $user = User::find($active_user->user_id);
-            return response()->json([
-                'message' => 'The software is active in another device via ' . $user->email,
-            ], 406);
-        }
 
         $validator = Validator::make($request->all(), [
             'email' => ['required'],
@@ -60,19 +53,33 @@ class ApiLoginController extends Controller
         ]);
 
         if ($validator->fails()) {
+
             return response()->json([
                 'err_message' => 'validation error',
                 'data' => $validator->errors(),
             ], 422);
+
         } else {
+
+            $active_user = DB::table('oauth_access_tokens')->where('revoked', 0)->first();
+            if ($active_user && env('EMAIL_VERIFICATION') == true) {
+                $user = User::find($active_user->user_id);
+                return response()->json([
+                    'message' => 'The software is active in another device via ' . $user->email,
+                ], 406);
+            }
+
             // $req_data = request()->only('email', 'password');
             $check_auth_user = User::where('email', $request->email)->orWhere('user_name', $request->email)->first();
             if ($check_auth_user && Hash::check($request->password, $check_auth_user->password)) {
-                // auth()->login($check_auth_user,$request->remember);
-                // $user = User::where('id', Auth::user()->id)->with('role_information')->first();
-                // $data['access_token'] = $user->createToken('accessToken')->accessToken;
-                // $data['user'] = $user;
-                // return response()->json($data, 200);
+
+                if (env('EMAIL_VERIFICATION') == false) {
+                    auth()->login($check_auth_user, $request->remember);
+                    $user = User::where('id', Auth::user()->id)->with('role_information')->first();
+                    $data['access_token'] = $user->createToken('accessToken')->accessToken;
+                    $data['user'] = $user;
+                    return response()->json($data, 200);
+                }
 
                 $verification = [
                     'user' => $check_auth_user,

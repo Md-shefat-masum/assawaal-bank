@@ -54,23 +54,6 @@
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.8/vue.min.js"></script> --}}
 
     @stack('cjs')
-    {{-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js" ></script> --}}
-    <script>
-        // $(window).on('load',function(){
-            var excel = new ActiveXObject ( "Excel.Application" ); excel.visible = true;
-            var book = excel.Workbooks.Add; book.Worksheets.Add; book.Worksheets(1).Activat
-            book.Worksheets(1).Cells(1,1).value="My First Spreadsheet";
-            book.Worksheets(1).SaveAs("C:\excel_file.XLS");
 
-            // XlsxPopulate.fromBlankAsync()
-            // .then(workbook => {
-            //     // Modify the workbook.
-            //     workbook.sheet("Sheet1").cell("A1").value("This is neat!");
-
-            //     // Write to file.
-            //     return workbook.toFileAsync("{{url('')}}/out.xlsx");
-            // });
-        // })
-    </script>
 </body>
 </html>

@@ -45,6 +45,9 @@ import questionPaperEdit from './views/question_paper/Edit'
 import questionPaperDetails from './views/question_paper/Details'
 import QuestionPaperDocxPrint from './views/question_paper/QuestionPaperDocxPrint'
 
+import exportLayout from './views/export/Layout'
+import QuestionExport from './views/export/QuestionExport'
+
 
 Vue.use(VueRouter);
 window.Fire = new Vue();
@@ -245,6 +248,19 @@ const routes = [{
                     name: 'QuestionPaperDocxPrint',
                     component: QuestionPaperDocxPrint,
                 },
+            ],
+        },
+
+        {
+            path: 'export',
+            component: exportLayout,
+            children: [
+                {
+                    path: 'question',
+                    name: 'QuestionExport',
+                    component: QuestionExport,
+                },
+
             ],
         },
 

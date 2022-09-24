@@ -224,7 +224,7 @@ class QuestionController extends Controller
         if ($request->question_pattern == 'mcq') {
             $this->validate($request, [
                 'answer' => ['required'],
-                'reference' => ['required'],
+                // 'reference' => ['required'],
                 'option_1' => ['required'],
                 'option_2' => ['required'],
                 'option_3' => ['required'],
@@ -270,7 +270,7 @@ class QuestionController extends Controller
         if ($request->question_pattern == 'mcq') {
             $this->validate($request, [
                 'answer' => ['required'],
-                'reference' => ['required'],
+                // 'reference' => ['required'],
                 'option_1' => ['required'],
                 'option_2' => ['required'],
                 'option_3' => ['required'],
@@ -336,6 +336,8 @@ class QuestionController extends Controller
                             'prepared_by' => $data[10],
                             'verified_by' => $data[11],
                             'level' => $data[12],
+                            'created_at' => $data[13],
+                            'updated_at' => $data[13],
                         ];
                         $modules[] = $temp;
                     }
@@ -383,6 +385,8 @@ class QuestionController extends Controller
             $data->verified_by = $item['verified_by'];
             $data->level = strlen($item['level']) > 4 ? $item['level'] : 'undefined';
             $data->creator = auth()->user()->id;
+            $data->created_at = $item['created_at'];
+            $data->updated_at = $item['updated_at'];
             $data->save();
         }
         return response()->json('data uploaded');
@@ -410,6 +414,8 @@ class QuestionController extends Controller
             'prepared_by',
             'verified_by',
             'level',
+            'created_at',
+            'updated_at',
         ]);
         $data = Question::where('status', 1)
             ->whereIn('module_id', $this->active_modules())
@@ -436,6 +442,8 @@ class QuestionController extends Controller
                 $question->prepared_by,
                 $question->verified_by,
                 $question->level,
+                $question->created_at,
+                $question->updated_at,
             ];
             fputcsv($fp, $fields);
         }
@@ -459,6 +467,8 @@ class QuestionController extends Controller
             'prepared_by',
             'verified_by',
             'level',
+            'created_at',
+            'updated_at',
         ]);
         if (request()->has('get_data_by_id') && $request->get_data_by_id) {
             $data =  $this->get(Question::find($request->get_data_by_id))->getData();
@@ -484,6 +494,8 @@ class QuestionController extends Controller
                 $question->prepared_by,
                 $question->verified_by,
                 $question->level,
+                $question->created_at,
+                $question->updated_at,
             ];
             fputcsv($fp, $fields);
         }
@@ -559,6 +571,8 @@ class QuestionController extends Controller
             'prepared_by',
             'verified_by',
             'level',
+            'created_at',
+            'updated_at',
         ]);
         if (request()->has('get_data_by_id') && $request->get_data_by_id) {
             $data =  $this->get(Question::find($request->get_data_by_id))->getData();
@@ -585,6 +599,8 @@ class QuestionController extends Controller
                 $question->prepared_by,
                 $question->verified_by,
                 $question->level,
+                $question->created_at,
+                $question->updated_at,
             ];
             fputcsv($fp, $fields);
         }
@@ -676,6 +692,8 @@ class QuestionController extends Controller
             'prepared_by',
             'verified_by',
             'level',
+            'created_at',
+            'updated_at',
         ]);
 
         // $data = $this->get_all_module_chapter_based_question($request->module_id)->getData();
@@ -697,6 +715,8 @@ class QuestionController extends Controller
                 $question->prepared_by,
                 $question->verified_by,
                 $question->level,
+                $question->created_at,
+                $question->updated_at,
             ];
             fputcsv($fp, $fields);
         }
@@ -720,6 +740,8 @@ class QuestionController extends Controller
             'prepared_by',
             'verified_by',
             'level',
+            'created_at',
+            'updated_at'
         ]);
 
         $data = Question::where('chapter_id', $request->chapter_id)
@@ -740,6 +762,8 @@ class QuestionController extends Controller
                 $question->prepared_by,
                 $question->verified_by,
                 $question->level,
+                $question->created_at,
+                $question->updated_at,
             ];
             fputcsv($fp, $fields);
         }
