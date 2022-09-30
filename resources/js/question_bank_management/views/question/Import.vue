@@ -43,7 +43,8 @@
                         <table class="table table-bordered text-center">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>ID</th>
+                                    <th>SI</th>
                                     <th>Module</th>
                                     <th>Chapter</th>
                                     <th>Question.Pattern</th>
@@ -64,6 +65,7 @@
                             <tbody>
                                 <tr v-for="(item, index) in data" :key="index">
                                     <td class="text-start">{{index+1}}</td>
+                                    <td>{{item.si}}</td>
                                     <td>{{item.module}}</td>
                                     <td>{{item.chapter}}</td>
                                     <td>{{item.question_pattern}}</td>

@@ -14,6 +14,13 @@
                     <div class="card-body">
                         <form action="#" class="row" @submit.prevent="store($event)">
                             <div class="form-group mb-3 col-lg-4">
+                                <label for="si" class="text-capitalize">
+                                    Question Serial
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <textarea type="text" id="si" rows="1" name="si" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group mb-3 col-lg-4">
                                 <label for="module_id"  class="text-capitalize">Select module</label>
                                 <select name="module_id" id="module_id" class="form-control">
                                     <option v-for="s_module in modules" :value="s_module.id" :key="s_module.id">{{s_module.name}}</option>
@@ -34,12 +41,13 @@
                             </div>
                             <div class="col-12"></div>
                             <div class="form-group mb-3 col-lg-12">
-                                <label for="question_title" class="text-capitalize">
-                                    Question title
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <textarea type="text" id="question_title" rows="1" name="question_title" class="form-control"></textarea>
-
+                                <div>
+                                    <label for="question_title" class="text-capitalize">
+                                        Question title
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea type="text" id="question_title" rows="1" name="question_title" class="form-control"></textarea>
+                                </div>
                                 <label for="question_image" class="text-capitalize mt-3">
                                     image upload
                                 </label> <br>
@@ -100,7 +108,7 @@
                             <div class="form-group mb-3">
                                 <label for="part_66_reference" class="text-capitalize">
                                     part 66 reference
-                                    <span class="text-danger">*</span>
+                                    <!-- <span class="text-danger">*</span> -->
                                 </label>
                                 <textarea type="text" id="part_66_reference" rows="1" name="part_66_reference" class="form-control"></textarea>
                             </div>
@@ -116,7 +124,7 @@
                             <div class="form-group mb-3">
                                 <label for="prepared_by" class="text-capitalize">
                                     prepared by
-                                    <span class="text-danger">*</span>
+                                    <!-- <span class="text-danger">*</span> -->
                                 </label>
                                 <input type="text" id="prepared_by" rows="1" name="prepared_by" class="form-control"/>
                             </div>
@@ -124,7 +132,7 @@
                             <div class="form-group mb-3">
                                 <label for="verified_by" class="text-capitalize">
                                     verified by
-                                    <span class="text-danger">*</span>
+                                    <!-- <span class="text-danger">*</span> -->
                                 </label>
                                 <input type="text" id="verified_by" rows="1" name="verified_by" class="form-control"/>
                             </div>
@@ -144,7 +152,7 @@
                             <div class="form-group mb-3">
                                 <label for="created_at" class="text-capitalize">
                                     created time
-                                    <span class="text-danger">*</span>
+                                    <!-- <span class="text-danger">*</span> -->
                                     <span class="text-info ps-1" @click="created_at = format_date()">Set</span>
                                 </label>
                                 <input type="datetime" v-model="created_at" id="created_at" name="created_at" class="form-control"/>

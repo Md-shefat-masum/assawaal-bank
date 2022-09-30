@@ -12,6 +12,13 @@
             <div class="card-body table-responsive">
                 <table class="table">
                     <tr>
+                        <td class="p-4" style="width: 200px; vertical-align: top;">Question Serial</td>
+                        <td style="width:10px">:</td>
+                        <td>
+                            {{data.si}}
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="p-4" style="width: 200px; vertical-align: top;">Question Name</td>
                         <td style="width:10px">:</td>
                         <td>

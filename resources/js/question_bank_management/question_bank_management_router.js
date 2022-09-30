@@ -48,6 +48,9 @@ import QuestionPaperDocxPrint from './views/question_paper/QuestionPaperDocxPrin
 import exportLayout from './views/export/Layout'
 import QuestionExport from './views/export/QuestionExport'
 
+import settingLayout from './views/setting/Layout'
+import PasswordSetting from './views/setting/PasswordSetting'
+
 
 Vue.use(VueRouter);
 window.Fire = new Vue();
@@ -259,6 +262,24 @@ const routes = [{
                     path: 'question',
                     name: 'QuestionExport',
                     component: QuestionExport,
+                },
+
+            ],
+        },
+
+        {
+            path: 'setting',
+            component: settingLayout,
+            children: [
+                {
+                    path: '',
+                    name: 'PasswordSetting',
+                    component: PasswordSetting,
+                },
+                {
+                    path: 'password',
+                    name: 'PasswordSetting',
+                    component: PasswordSetting,
                 },
 
             ],

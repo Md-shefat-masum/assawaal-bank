@@ -46,6 +46,14 @@
                                         <input id="show_level" type="checkbox" v-model="show_level">
                                         Show level
                                     </label>
+                                    <label for="show_prepared_by" class="me-4">
+                                        <input id="show_prepared_by" type="checkbox" v-model="show_prepared_by">
+                                        Show prepared by
+                                    </label>
+                                    <label for="show_verified_by" class="me-4">
+                                        <input id="show_verified_by" type="checkbox" v-model="show_verified_by">
+                                        Show verified by
+                                    </label>
                                     <label for="created_at" class="me-4">
                                         <input id="created_at" type="checkbox" v-model="created_at">
                                         Created Time
@@ -71,13 +79,25 @@
                                         <li style="list-style: lower-alpha; line-height: 24px;">{{question.option_3}}</li>
                                     </ol>
                                     <div v-if="show_ans">
-                                        <b>Answer : </b> {{ question.answer }}
+                                        <b>Answer : </b>
+                                            {{ question.answer }}
+                                            <span v-if="question.answer == 'a'">( {{question.option_1}} )</span>
+                                            <span v-if="question.answer == 'b'">( {{question.option_2}} )</span>
+                                            <span v-if="question.answer == 'c'">( {{question.option_3}} )</span>
                                     </div>
                                     <div v-if="show_ref">
-                                        <b>Reference : </b> {{ question.reference }}
+                                        <b>Part 66 reference : </b> {{ question.part_66_reference }}
+                                        <br>
+                                        <b>Training note reference : </b> {{ question.training_note_reference }}
                                     </div>
                                     <div v-if="show_level">
                                         <b>Level : </b> {{ question.level }}
+                                    </div>
+                                    <div v-if="show_verified_by">
+                                        <b>Verified by : </b> {{ question.verified_by }}
+                                    </div>
+                                    <div v-if="show_prepared_by">
+                                        <b>Prepared by : </b> {{ question.prepared_by }}
                                     </div>
                                     <div v-if="created_at">
                                         <b>Created time : </b> {{ format_date(question.created_at) !== 'Invalid date' ? format_date(question.created_at) :'' }}
@@ -121,6 +141,8 @@ export default {
             show_ans: false,
             show_ref: false,
             show_level: false,
+            show_prepared_by: false,
+            show_verified_by: false,
             created_at: false,
             updated_at: false,
 

@@ -577,7 +577,7 @@ input[type="date"] {
     width: 0px !important;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer;
 }
 
@@ -603,46 +603,60 @@ input[type="date"] {
                 width: 90px;
             }
 
-            each(range(3,5,1),{
-                &:nth-child(@{value}) {
-                    width: 290px;
-                }
-            })
+            &:nth-child(3) {
+                width: 90px;
+            }
 
-            each(range(6,10,1),{
-                &:nth-child(@{value}) {
-                    width: 240px;
+            each(range(4, 5, 1), {
+                    &:nth-child(@{value}) {
+                        width: 290px;
+                    }
                 }
-            })
 
-            each(range(11,12,1),{
-                &:nth-child(@{value}) {
-                    width: 125px;
+            ) each(range(6, 10, 1), {
+                    &:nth-child(@{value}) {
+                        width: 240px;
+                    }
                 }
-            })
 
-            table.question_list_table_selected& {
+            ) &:nth-child(11) {
+                width: 335px;
+            }
+
+            each(range(12, 1), {
+                    &:nth-child(@{value}) {
+                        width: 125px;
+                    }
+                }
+
+            ) table.question_list_table_selected& {
                 &:nth-child(1) {
                     width: 100px;
                 }
 
-                each(range(2,4,1),{
-                    &:nth-child(@{value}) {
-                        width: 300px;
-                    }
-                })
+                &:nth-child(2) {
+                    width: 100px;
+                }
 
-                each(range(5,9,1),{
-                    &:nth-child(@{value}) {
-                        width: 250px;
+                each(range(3, 4, 1), {
+                        &:nth-child(@{value}) {
+                            width: 300px;
+                        }
                     }
-                })
 
-                each(range(10,11,1),{
-                    &:nth-child(@{value}) {
-                        width: 125px;
+                ) each(range(5, 9, 1), {
+                        &:nth-child(@{value}) {
+                            width: 250px;
+                        }
                     }
-                })
+
+                ) each(range(10, 11, 1), {
+                        &:nth-child(@{value}) {
+                            width: 125px;
+                        }
+                    }
+
+                )
             }
 
             table.question_list_table_selected_for_create_paper& {
@@ -654,17 +668,19 @@ input[type="date"] {
                     width: 100px;
                 }
 
-                each(range(3,7,1),{
-                    &:nth-child(@{value}) {
-                        width: 200px;
+                each(range(3, 7, 1), {
+                        &:nth-child(@{value}) {
+                            width: 200px;
+                        }
                     }
-                })
 
-                each(range(8,10,1),{
-                    &:nth-child(@{value}) {
-                        width: 125px;
+                ) each(range(8, 10, 1), {
+                        &:nth-child(@{value}) {
+                            width: 125px;
+                        }
                     }
-                })
+
+                )
             }
 
             table.question_list_table_selected_for_create_paper_selected& {
@@ -676,17 +692,19 @@ input[type="date"] {
                     width: 100px;
                 }
 
-                each(range(3,7,1),{
-                    &:nth-child(@{value}) {
-                        width: 200px;
+                each(range(3, 7, 1), {
+                        &:nth-child(@{value}) {
+                            width: 200px;
+                        }
                     }
-                })
 
-                each(range(8,10,1),{
-                    &:nth-child(@{value}) {
-                        width: 125px;
+                ) each(range(8, 10, 1), {
+                        &:nth-child(@{value}) {
+                            width: 125px;
+                        }
                     }
-                })
+
+                )
             }
 
             table.question_list_table_for_create_paper_details& {
@@ -694,27 +712,29 @@ input[type="date"] {
                     width: unset;
                 }
 
-                each(range(2,6,1),{
-                    &:nth-child(@{value}) {
-                        width: 200px;
+                each(range(2, 6, 1), {
+                        &:nth-child(@{value}) {
+                            width: 200px;
+                        }
                     }
-                })
 
-                each(range(7,9,1),{
-                    &:nth-child(@{value}) {
-                        width: 125px;
+                ) each(range(7, 9, 1), {
+                        &:nth-child(@{value}) {
+                            width: 125px;
+                        }
                     }
-                })
+
+                )
             }
 
         }
     }
 }
 
-.has_event{
+.has_event {
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         text-shadow: 4px 4px 3px rgb(0 0 0 / 23%);
     }
 }
-

@@ -35,7 +35,8 @@
                             <th onclick="event.target.children.length ? event.target.children[0].click() : '' ">
                                 <input @change="select_all($event.target);" id="select_all" type="checkbox">
                             </th>
-                            <th class="has_event" @click="get_data_order_by('id')">SI</th>
+                            <th class="has_event" @click="get_data_order_by('id')">ID</th>
+                            <th class="has_event" @click="get_data_order_by('si')">SI</th>
                             <th class="has_event" @click="get_data_order_by('module_id')">Module</th>
                             <th class="has_event" @click="get_data_order_by('chapter_id')">Chapter</th>
                             <th class="has_event" @click="get_data_order_by('question_title')">Question</th>
@@ -57,6 +58,7 @@
                                 <input :id="`checkbox_${item.id}`" type="checkbox" @click="select_question($event,{...item})">
                             </td>
                             <td>{{item.id}}</td>
+                            <td>{{item.si}}</td>
                             <td>{{item.module.name}}</td>
                             <td>{{item.chapter.chapter_name}}</td>
                             <td>{{item.question_title}}</td>
@@ -64,7 +66,11 @@
                             <td>{{item.option_2}}</td>
                             <td>{{item.option_3}}</td>
                             <td>{{item.answer}}</td>
-                            <td>{{item.reference}}</td>
+                            <td>
+                                <b>part 66 reference</b>: {{item.part_66_reference}}
+                                <br>
+                                <b>training note reference</b>: {{item.training_note_reference}}
+                            </td>
                             <td>{{item.level}}</td>
                             <td>{{item.used_question_count}}</td>
                             <td>{{format_date(item.created_at)}}</td>
@@ -133,6 +139,7 @@
                     <table class="table question_list_table_selected question_list_table table-bordered text-center table-hover">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>SI</th>
                                 <th>Module</th>
                                 <th>Chapter</th>
@@ -150,6 +157,7 @@
                         <tbody>
                             <tr v-for="(item, index) in selected_data_list" :key="item.id">
                                 <td>{{item.id}}</td>
+                                <td>{{item.si}}</td>
                                 <td>{{item.module.name}}</td>
                                 <td>{{item.chapter.chapter_name}}</td>
                                 <td>{{item.question_title}}</td>
@@ -157,7 +165,11 @@
                                 <td>{{item.option_2}}</td>
                                 <td>{{item.option_3}}</td>
                                 <td>{{item.answer}}</td>
-                                <td>{{item.reference}}</td>
+                                <td>
+                                    <b>part 66 reference</b>: {{item.part_66_reference}}
+                                    <br>
+                                    <b>training note reference</b>: {{item.training_note_reference}}
+                                </td>
                                 <td>{{item.level}}</td>
                                 <td>{{item.used_question_count}}</td>
                                 <td style="width: 90px;">

@@ -500,7 +500,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 90px;
 }
 .question_list_table tr td:nth-child(3) {
-  width: 290px;
+  width: 90px;
 }
 .question_list_table tr td:nth-child(4) {
   width: 290px;
@@ -524,16 +524,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 240px;
 }
 .question_list_table tr td:nth-child(11) {
-  width: 125px;
-}
-.question_list_table tr td:nth-child(12) {
-  width: 125px;
+  width: 335px;
 }
 table.question_list_table_selected.question_list_table tr td:nth-child(1) {
   width: 100px;
 }
 table.question_list_table_selected.question_list_table tr td:nth-child(2) {
-  width: 300px;
+  width: 100px;
 }
 table.question_list_table_selected.question_list_table tr td:nth-child(3) {
   width: 300px;

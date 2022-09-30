@@ -8,6 +8,7 @@ use App\Models\Module;
 use App\Models\Question;
 use App\Models\QuestionPaper;
 use App\Models\QuestionPaperQuestion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -167,9 +168,11 @@ class QuestionController extends Controller
                 $query->where(function ($q) use ($key) {
                     $q->where('question_title', $key)
                         // ->orWhere('id', $key)
+                        ->orWhere('si', 'LIKE', '%' . $key . '%')
                         ->orWhere('question_title', 'LIKE', '%' . $key . '%')
                         ->orWhere('answer', 'LIKE', '%' . $key . '%')
-                        ->orWhere('reference', 'LIKE', '%' . $key . '%')
+                        ->orWhere('part_66_reference', 'LIKE', '%' . $key . '%')
+                        ->orWhere('training_note_reference', 'LIKE', '%' . $key . '%')
                         ->orWhere('option_1', 'LIKE', '%' . $key . '%')
                         ->orWhere('option_2', 'LIKE', '%' . $key . '%')
                         ->orWhere('option_3', 'LIKE', '%' . $key . '%')
@@ -212,13 +215,14 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
+            'si' => ['required'],
             'question_title' => ['required'],
             'module_id' => ['required'],
             'chapter_id' => ['required'],
             'question_pattern' => ['required'],
-
         ], [
             'module_id.required' => 'The module field is required',
+            'si.required' => 'The Serial field is required',
         ]);
 
         if ($request->question_pattern == 'mcq') {
@@ -258,6 +262,7 @@ class QuestionController extends Controller
     public function update(Request $request)
     {
         $this->validate($request, [
+            'si' => ['required'],
             'question_title' => ['required'],
             'module_id' => ['required'],
             'chapter_id' => ['required'],
@@ -323,21 +328,22 @@ class QuestionController extends Controller
                 while (($data = fgetcsv($handle, 999999, ",")) !== FALSE) {
                     if ($row > 1 && count($data)) {
                         $temp = [
-                            'module' => $data[0],
-                            'chapter' => $data[1],
-                            'question_pattern' => $data[2],
-                            'question_title' => $data[3],
-                            'option1' => $data[4],
-                            'option2' => $data[5],
-                            'option3' => $data[6],
-                            'answer' => $data[7],
-                            'part_66_reference' => $data[8],
-                            'training_note_reference' => $data[9],
-                            'prepared_by' => $data[10],
-                            'verified_by' => $data[11],
-                            'level' => $data[12],
-                            'created_at' => $data[13],
-                            'updated_at' => $data[13],
+                            'si' => $data[0],
+                            'module' => $data[1],
+                            'chapter' => $data[2],
+                            'question_pattern' => $data[3],
+                            'question_title' => $data[4],
+                            'option1' => $data[5],
+                            'option2' => $data[6],
+                            'option3' => $data[7],
+                            'answer' => $data[8],
+                            'part_66_reference' => $data[9],
+                            'training_note_reference' => $data[10],
+                            'prepared_by' => $data[11],
+                            'verified_by' => $data[12],
+                            'level' => $data[13],
+                            'created_at' => Carbon::parse($data[14])->toDateTimeString(),
+                            'updated_at' => Carbon::parse($data[15])->toDateTimeString(),
                         ];
                         $modules[] = $temp;
                     }
@@ -373,6 +379,7 @@ class QuestionController extends Controller
                 ]);
                 $data->chapter_id = $chapter->id;
             }
+            $data->si = $item['si'];
             $data->question_pattern = $item['question_pattern'];
             $data->question_title = $item['question_title'];
             $data->option_1 = $item['option1'];
@@ -385,8 +392,8 @@ class QuestionController extends Controller
             $data->verified_by = $item['verified_by'];
             $data->level = strlen($item['level']) > 4 ? $item['level'] : 'undefined';
             $data->creator = auth()->user()->id;
-            $data->created_at = $item['created_at'];
-            $data->updated_at = $item['updated_at'];
+            $data->created_at = Carbon::parse($item['created_at'])->toDateTimeString();
+            $data->updated_at = Carbon::parse($item['updated_at'])->toDateTimeString();
             $data->save();
         }
         return response()->json('data uploaded');
@@ -396,6 +403,7 @@ class QuestionController extends Controller
     {
         $fp = fopen(public_path('export.csv'), 'w');
         fputcsv($fp, [
+            'si',
             'module',
             'chapter',
             'question_pattern',
@@ -424,6 +432,7 @@ class QuestionController extends Controller
             ->get();
         foreach ($data as $question) {
             $fields = [
+                $question->si,
                 $question->module->name,
                 $question->chapter->chapter_name,
                 $question->question_pattern,
@@ -454,6 +463,7 @@ class QuestionController extends Controller
     {
         $fp = fopen(public_path('export.csv'), 'w');
         fputcsv($fp, [
+            'si',
             'module',
             'chapter',
             'question_pattern',
@@ -481,6 +491,7 @@ class QuestionController extends Controller
             $question->module = (object) $question->module;
             $question->chapter = (object) $question->chapter;
             $fields = [
+                $question->si,
                 $question->module->name,
                 $question->chapter->chapter_name,
                 $question->question_pattern,
@@ -558,6 +569,7 @@ class QuestionController extends Controller
     {
         $fp = fopen(public_path('export.csv'), 'w');
         fputcsv($fp, [
+            'si',
             'module',
             'chapter',
             'question_pattern',
@@ -586,6 +598,7 @@ class QuestionController extends Controller
             $question->chapter = (object) $question->chapter;
             Question::where('id', $question->id)->delete();
             $fields = [
+                $question->si,
                 $question->module->name,
                 $question->chapter->chapter_name,
                 $question->question_pattern,
@@ -679,6 +692,7 @@ class QuestionController extends Controller
     {
         $fp = fopen(public_path('export.csv'), 'w');
         fputcsv($fp, [
+            'si',
             'module',
             'chapter',
             'question_pattern',
@@ -702,6 +716,7 @@ class QuestionController extends Controller
             ->get();
         foreach ($data as $question) {
             $fields = [
+                $question->si,
                 $question->module->name,
                 $question->chapter->chapter_name,
                 $question->question_pattern,
@@ -727,6 +742,7 @@ class QuestionController extends Controller
     {
         $fp = fopen(public_path('export.csv'), 'w');
         fputcsv($fp, [
+            'si',
             'module',
             'chapter',
             'question_pattern',
@@ -749,6 +765,7 @@ class QuestionController extends Controller
             ->get();
         foreach ($data as $question) {
             $fields = [
+                $question->si,
                 $question->module->name,
                 $question->chapter->chapter_name,
                 $question->question_pattern,

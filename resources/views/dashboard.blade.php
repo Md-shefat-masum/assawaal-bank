@@ -10,21 +10,19 @@
 
         <title>Question Bank</title>
 
-        <!-- Scripts -->
-
-        <!-- Fonts -->
-        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" />
-
         <!-- Styles -->
         <link href="{{asset('')}}/css/app.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+        <link rel="stylesheet" href="/contents/admin/bootstrap.min.css">
+        <link rel="stylesheet" href="/contents/admin/font-awesome-all.min.css" />
         <link rel="stylesheet" href="{{ asset('contents/admin/admin.css') }}">
-        <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+        <script src="/contents/admin/pace.min.js"></script>
+        <link rel="stylesheet" href="/contents/admin/pace-theme-default.min.css">
+        <script src="/contents/admin/sweetalert2@9.js"></script>
         <style>
+            @font-face{
+                font-family: 'Nunito', sans-serif;
+                src: url("/fonts/Nunito-Regular.ttf");
+            }
             #app_pre_loader{
                 position: fixed;
                 top: 0;
@@ -90,6 +88,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="#/setting">
+                                    <i class="fa fa-gear"></i>
+                                </a>
+                            </li>
+                            <li>
                                 <div class="watch">
                                     <div class="hour">@{{hour}}</div>:
                                     <div class="min">@{{min}}</div>:
@@ -112,10 +115,10 @@
             @csrf
         </form>
 
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="/contents/admin/select2.min.css" rel="stylesheet" />
         <script src="/js/question_bank_management.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        
+        <script defer src="/contents/admin/select2.min.js"></script>
+
     </body>
 </html>
 
