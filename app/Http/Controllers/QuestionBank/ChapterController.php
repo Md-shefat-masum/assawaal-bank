@@ -11,6 +11,8 @@ use App\Models\QuestionPaperQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use function PHPUnit\Framework\isNull;
+
 class ChapterController extends Controller
 {
     public function get_all()
@@ -43,16 +45,19 @@ class ChapterController extends Controller
                 'module' => function ($q) {
                     return $q->where('status', 1)->select(['id', 'name']);
                 }
-            ])
-            ->whereIn('module_id', $this->active_modules());
+            ]);
 
-        if ($request->has('key') && strlen($request->key) > 0) {
-            $key = $request->key;
+        if ($request->has('module_id') && (int) $request->module_id > 0) {
+            $query->where('module_id', $request->module_id);
+        }else{
+            $query->whereIn('module_id', $this->active_modules());
+        }
+
+        $key = $request->key;
+        if ($key && strlen(trim($key)) > 0 && $key != 'null') {
             $query->where(function ($q) use ($key) {
                 $q->where('chapter_name', $key)
-                    ->orWhere('id', $key)
-                    ->orWhere('chapter_name', 'LIKE', '%' . $key . '%')
-                    ->orWhere('module_id', $key);
+                    ->orWhere('chapter_name', 'LIKE', '%' . $key . '%');
             });
         }
         // $data = $query->paginate(env('PAGINATE'));
@@ -81,7 +86,7 @@ class ChapterController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'chapter_name' => ['required'],
+            'chapter_name' => ['required', 'unique:chapters'],
             'module_id' => ['required'],
         ], [
             'module_id.required' => 'The module field is required',

@@ -9,7 +9,10 @@
                     </span>
                 </h5>
                 <div style="max-width: 220px;">
-                    <search-box :set_search_key="set_search_key" :search_data="search_data"></search-box>
+                    <search-box
+                        :set_search_module_id="set_search_module_id"
+                        :set_search_key="set_search_key"
+                        :search_data="search_data"></search-box>
                 </div>
                 <div class="d-flex gap-2">
                     <import-export-button :page="'chapter'"></import-export-button>
@@ -180,7 +183,10 @@ export default {
         return {
             data: {},
             page: 1,
+
             key: null,
+            search_module_id: null,
+
             url: '/question-bank/chapter?page=',
 
             selected_data: [],
@@ -212,11 +218,18 @@ export default {
                 })
         },
         search_data: function(){
-            this.url = '/question-bank/chapter?key='+this.key+'&page=';
+            this.url = '/question-bank/chapter?key='+this.key;
+            if(this.search_module_id){
+                this.url += `&module_id=${this.search_module_id}`
+            }
+            this.url += '&page=';
             this.get_data();
         },
         set_search_key: function(key){
             this.key = key;
+        },
+        set_search_module_id: function(search_module_id){
+            this.search_module_id = search_module_id;
         },
         remove: function(index, id){
             if(confirm('Sure!! Do want to delete?\nThe chapter is connected with question and question papers.')){

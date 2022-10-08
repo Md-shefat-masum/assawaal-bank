@@ -55,7 +55,7 @@ class ModuleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => ['required'],
+            'name' => ['required','unique:modules'],
             'number' => ['required'],
         ], [
             'number.required' => 'The module number field is required',

@@ -154,8 +154,8 @@ class QuestionController extends Controller
             $query->where('module_id', $request->module_id);
         }
 
-        if ($request->has('key') && strlen($request->key) > 0) {
-            $key = $request->key;
+        $key = $request->key;
+        if ( $key && strlen(trim($key)) && $key != 'null') {
             $module = Module::where('name', 'LIKE', '%' . $key . '%')->first();
             $chapter = Chapter::where('chapter_name', 'LIKE', '%' . $key . '%')->first();
             if ($module) {
@@ -216,7 +216,7 @@ class QuestionController extends Controller
     {
         $this->validate($request, [
             'si' => ['required'],
-            'question_title' => ['required'],
+            'question_title' => ['required','unique:questions'],
             'module_id' => ['required'],
             'chapter_id' => ['required'],
             'question_pattern' => ['required'],

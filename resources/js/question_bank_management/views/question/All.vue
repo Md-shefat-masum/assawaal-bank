@@ -6,8 +6,12 @@
                     Question list
                     <span v-if="type">( {{type}} )</span>
                 </h5>
-                <div style="max-width: 220px;">
-                    <search-box :set_search_key="set_search_key" :search_data="search_data"></search-box>
+                <div style="max-width: 360px;">
+                    <search-box
+                        :set_search_module_id="set_search_module_id"
+                        :set_search_chapter_id="set_search_chapter_id"
+                        :set_search_key="set_search_key"
+                        :search_data="search_data"></search-box>
                 </div>
                 <div class="d-flex gap-2">
                     <import-export-button
@@ -262,7 +266,11 @@ export default {
         return {
             data: {},
             page: 1,
+
             key: null,
+            search_module_id: null,
+            search_chapter_id: null,
+
             per_page: 10,
             url: null,
 
@@ -350,6 +358,15 @@ export default {
             }
 
             this.url = `/question-bank/question?order_type=${this.order_by.type}&order_by=${this.order_by.key}&per_page=${this.per_page}`;
+
+            if(this.given_module_id > 0){
+                this.url += `&module_id=${this.given_module_id}`;
+            }
+
+            if(this.given_chapter_id > 0){
+                this.url += `&chapter_id=${this.given_chapter_id}`;
+            }
+
             if(this.key){
                 this.url += `&key=`+this.key;
             }
@@ -357,11 +374,24 @@ export default {
             this.get_data();
         },
         search_data: function(){
-            this.url = `/question-bank/question?per_page=${this.per_page}&key=`+this.key+'&page=';
+            this.url = `/question-bank/question?per_page=${this.per_page}&key=`+this.key;
+            if(this.search_chapter_id){
+                this.url += `&chapter_id=${this.search_chapter_id}`
+            }
+            if(this.search_module_id){
+                this.url += `&module_id=${this.search_module_id}`
+            }
+            this.url += '&page='
             this.get_data();
         },
         set_search_key: function(key){
             this.key = key;
+        },
+        set_search_module_id: function(search_module_id){
+            this.search_module_id = search_module_id;
+        },
+        set_search_chapter_id: function(search_chapter_id){
+            this.search_chapter_id = search_chapter_id;
         },
         remove: function(index, id){
             if(confirm('sure want to delete')){
