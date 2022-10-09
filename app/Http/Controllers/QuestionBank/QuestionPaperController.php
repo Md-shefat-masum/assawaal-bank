@@ -152,8 +152,11 @@ class QuestionPaperController extends Controller
     public function delete(Request $request)
     {
         $data = QuestionPaper::find($request->id);
-        $data->status = 0;
-        $data->save();
+        if($data){
+            QuestionPaperQuestion::where('question_paper_id', $data->id)->delete();
+            $data->status = 0;
+            $data->save();
+        }
         // return 1;
         return $this->all($request);
     }

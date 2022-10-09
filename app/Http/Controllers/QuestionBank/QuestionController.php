@@ -44,7 +44,7 @@ class QuestionController extends Controller
             ->where('status', 1)
             ->whereIn('module_id', $this->active_modules())
             ->whereIn('chapter_id', $this->active_chapters())
-            ->orderBy('name', 'ASC')->get();
+            ->orderBy('si', 'ASC')->get();
     }
 
     public function module_chapter_based_question(Request $request)
@@ -127,7 +127,7 @@ class QuestionController extends Controller
         if ($request->has('order_by') && strlen($request->order_by)) {
             $query->orderBy($request->order_by, ($request->order_type == 'true' ? 'ASC' : 'DESC'));
         } else {
-            $query->orderBy('id', 'DESC');
+            $query->orderBy('id', 'ASC');
         }
 
         if ($request->has('type') && strlen($request->type) >= 3) {
@@ -155,15 +155,23 @@ class QuestionController extends Controller
         }
 
         $key = $request->key;
-        if ( $key && strlen(trim($key)) && $key != 'null') {
-            $module = Module::where('name', 'LIKE', '%' . $key . '%')->first();
-            $chapter = Chapter::where('chapter_name', 'LIKE', '%' . $key . '%')->first();
+
+        if ($key && strlen(trim($key)) && $key != 'null') {
+            $module = Module::where('name', $key)->first();
+            $chapter = Chapter::where('chapter_name', $key)->first();
             if ($module) {
                 $key = $module->id;
                 $query->where('module_id', $key);
             } else if ($chapter) {
                 $key = $chapter->id;
                 $query->where('chapter_id', $key);
+            } else if ($request->has('search_column') && strlen(trim($request->get('search_column')))) {
+
+                $query->where(function ($q) use ($key, $request) {
+                    $q->where($request->search_column, $key);
+                        // ->orWhere($request->search_column, 'LIKE', '%'.$key.'%');
+                });
+
             } else {
                 $query->where(function ($q) use ($key) {
                     $q->where('question_title', $key)
@@ -180,6 +188,7 @@ class QuestionController extends Controller
                 });
             }
         }
+
         if ($request->has('per_page') && $request->per_page) {
             $data = $query->paginate($request->per_page);
         } else {
@@ -216,7 +225,7 @@ class QuestionController extends Controller
     {
         $this->validate($request, [
             'si' => ['required'],
-            'question_title' => ['required','unique:questions'],
+            'question_title' => ['required', 'unique:questions'],
             'module_id' => ['required'],
             'chapter_id' => ['required'],
             'question_pattern' => ['required'],
@@ -437,15 +446,15 @@ class QuestionController extends Controller
                 $question->chapter->chapter_name,
                 $question->question_pattern,
                 $question->question_title,
-                $question->question_image?url('').'/'.$question->question_image:'',
+                $question->question_image ? url('') . '/' . $question->question_image : '',
                 $question->option_1,
-                $question->option_1_image?url('').'/'.$question->option_1_image:'',
+                $question->option_1_image ? url('') . '/' . $question->option_1_image : '',
                 $question->option_2,
-                $question->option_2_image?url('').'/'.$question->option_2_image:'',
+                $question->option_2_image ? url('') . '/' . $question->option_2_image : '',
                 $question->option_3,
-                $question->option_3_image?url('').'/'.$question->option_3_image:'',
+                $question->option_3_image ? url('') . '/' . $question->option_3_image : '',
                 $question->answer,
-                $question->answer_image?url('').'/'.$question->answer_image:'',
+                $question->answer_image ? url('') . '/' . $question->answer_image : '',
                 $question->part_66_reference,
                 $question->training_note_reference,
                 $question->prepared_by,

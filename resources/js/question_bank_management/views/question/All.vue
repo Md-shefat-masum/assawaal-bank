@@ -6,8 +6,10 @@
                     Question list
                     <span v-if="type">( {{type}} )</span>
                 </h5>
-                <div style="max-width: 360px;">
+                <div style="max-width: 465px;">
                     <search-box
+                        :show_question_columns="true"
+                        :set_search_column="set_search_column"
                         :set_search_module_id="set_search_module_id"
                         :set_search_chapter_id="set_search_chapter_id"
                         :set_search_key="set_search_key"
@@ -270,6 +272,7 @@ export default {
             key: null,
             search_module_id: null,
             search_chapter_id: null,
+            search_column: null,
 
             per_page: 10,
             url: null,
@@ -367,6 +370,16 @@ export default {
                 this.url += `&chapter_id=${this.given_chapter_id}`;
             }
 
+            if(this.search_column){
+                this.url += `&search_column=${this.search_column}`
+            }
+            if(this.search_chapter_id){
+                this.url += `&chapter_id=${this.search_chapter_id}`
+            }
+            if(this.search_module_id){
+                this.url += `&module_id=${this.search_module_id}`
+            }
+
             if(this.key){
                 this.url += `&key=`+this.key;
             }
@@ -375,6 +388,9 @@ export default {
         },
         search_data: function(){
             this.url = `/question-bank/question?per_page=${this.per_page}&key=`+this.key;
+            if(this.search_column){
+                this.url += `&search_column=${this.search_column}`
+            }
             if(this.search_chapter_id){
                 this.url += `&chapter_id=${this.search_chapter_id}`
             }
@@ -386,6 +402,9 @@ export default {
         },
         set_search_key: function(key){
             this.key = key;
+        },
+        set_search_column: function(search_column){
+            this.search_column = search_column;
         },
         set_search_module_id: function(search_module_id){
             this.search_module_id = search_module_id;
