@@ -61,7 +61,8 @@ class QuestionPaperController extends Controller
         $question_paper->questions = $question_paper->questions()
             ->with([
                 'question' => function ($q) {
-                    $q->withCount('used_question');
+                    $q->withCount('used_question')
+                        ->with('chapter');
                 },
             ])
             ->get();
@@ -86,6 +87,14 @@ class QuestionPaperController extends Controller
         // dd($selected_question , $selected_question_list);
         $question_paper->selected_question = $selected_question;
         $question_paper->selected_question_list = collect($selected_question_list)->shuffle();
+
+        $sort_by_chapter = $selected_question_list;
+        usort($sort_by_chapter,function($item,$item2){
+            return $item->chapter_id <=> $item2->chapter_id;
+        });
+
+        $question_paper->sort_by_chapter_list = $sort_by_chapter;
+
         return response()->json($question_paper);
     }
 

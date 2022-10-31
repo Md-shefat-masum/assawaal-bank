@@ -15,7 +15,18 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
+    step 1: open external-drive > QB Software Do Not Entry > server
+    step 2: open xampp-cotrol.exe
+    step 3: start apache and mysql
+
+    step 4: open external-drive > QB Software Do Not Entry > server > htdocs
+    step 5: slect question_bank, press shift and right click, click open power_shell window
+    step 6: paste the command >  php artisan serve
+    step 7: visit http://127.0.0.1:8000
+    step 8: done
 */
+
+
 
 Route::get('/', 'WebsiteController@index')->name('index')->middleware('auth');
 

@@ -66,6 +66,10 @@
                                     <input id="show_level" type="checkbox" v-model="show_level">
                                     Show level
                                 </label>
+                                <label for="sort_by_chapter" class="me-4">
+                                    <input id="sort_by_chapter" type="checkbox" v-model="sort_by_chapter">
+                                    Chapter wise sort
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -90,7 +94,12 @@
                             </tr>
                         </table>
 
-                        <div style="margin: 15px 0px;" v-for="(question,index) in selected_question_list" :key="question.id" >
+                        <div style="margin: 15px 0px;" v-for="(question,index) in render_list" :key="question.id" >
+
+                            <div v-if="chapter_render_condition(sort_by_chapter, index, question)" class="mb-4 border-bottom">
+                                <h3>Chapter: {{question.chapter.chapter_name}}</h3>
+                            </div>
+
                             <h4>{{index+1}}. {{question.question_title}}</h4>
                             <ol type="a" style="padding-left: 25px; margin: 0;line-height: 24px;">
                                 <li style="list-style: lower-alpha; line-height: 24px;">{{question.option_1}}</li>
@@ -107,6 +116,7 @@
                                 <b>Level : </b> {{ question.level }}
                             </div>
                         </div>
+
                     </div>
 
                 </div>
@@ -123,16 +133,30 @@ export default {
         // this.get_chapters();
         // this.get_data();
     },
+    watch: {
+        sort_by_chapter: {
+            handler: function(newV){
+                if(newV){
+                    this.render_list = this.sort_by_chapter_list;
+                }else{
+                    this.render_list = this.selected_question_list;
+                }
+            }
+        }
+    },
     data: function(){
         return {
             question: {},
             selected_question: [],
             selected_question_list: [],
+            sort_by_chapter_list: [],
+            render_list: [],
             selected_chapter_id: null,
 
             show_ans: false,
             show_ref: false,
             show_level: false,
+            sort_by_chapter: false,
 
             course: null,
             exam: null,
@@ -153,9 +177,24 @@ export default {
                     // console.log(res.data);
                     this.question = res.data;
                     this.question_pattern = res.data.question_pattern;
-                    this.selected_question_list = res.data.selected_question_list;
                     this.selected_question = res.data.selected_question;
+
+                    this.selected_question_list = res.data.selected_question_list;
+                    this.sort_by_chapter_list = res.data.sort_by_chapter_list;
+                    this.render_list = res.data.selected_question_list;
                 })
+        },
+
+        chapter_render_condition: function(sort_by_chapter, index, question){
+            if(sort_by_chapter && (index >= 0)){
+                if(index == 0){
+                    return true
+                }
+                if(question.chapter_id != this.render_list[index-1].chapter_id){
+                    return true;
+                }
+            }
+            return false;
         },
 
         demo_data: function(){
