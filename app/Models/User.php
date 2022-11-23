@@ -43,18 +43,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserRole::class,'role_id','role_serial');
     }
-
-    public function followers()
-    {
-        return $this->hasMany(ModaratorOfUser::class,'modarator_id','id');
-    }
-
-    public function active_status()
-    {
-        return $this->hasMany(SecretaryStatus::class,'user_id','id');
-    }
-    public function latest_active_status()
-    {
-        return $this->hasOne(SecretaryStatus::class,'user_id','id');
-    }
 }
