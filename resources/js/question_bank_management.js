@@ -3,13 +3,14 @@ require('./custom');
 import axios from "axios";
 import moment from "moment";
 import Vue from "vue";
-// window.Vue = require('vue');
+
 window.moment = require('moment');
 window._ = require('lodash');
 import router from './question_bank_management/question_bank_management_router';
 
 window.axios.defaults.headers.common["Authorization"] = `Bearer ${window.localStorage?.token}`;
 axios.defaults.baseURL = location.origin + '/api/v1';
+
 window.onUploadProgress = (progressEvent) => {}
 function onDownloadProgress (progressEvent) {}
 
@@ -17,9 +18,9 @@ window.formatDate = (date, format_type="date") => {
     if(format_type == 'date'){
         return moment(date).format('DD-MMMM-YYYY')
     }else if(format_type == 'date_time'){
-        return moment(date).format('DD-MMMM-YYYY hh-mm-ss A')
+        return moment(date).format('DD-MMMM-YYYY hh:mm:ss A')
     }else if(format_type == 'time'){
-        return moment(date).format('hh-mm-ss A')
+        return moment(date).format('hh:mm:ss A')
     }else{
         return moment(date).format(format_type)
     }
